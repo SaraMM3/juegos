@@ -1,5 +1,6 @@
 // Variable que guardara el personaje elegido, para poder usar el sprite adecuado
 var personaje = ""
+// Variables que fuardaran los callbacks de los eventos, para comunicarlos a la plataforma
 var cambioPuntuacion
 var gameOverEvento
 var nuevaPartida
@@ -9,7 +10,8 @@ var nuevaPartida
 
         preload (){
             // En este caso, accedemos a los sprites que estan con codigo plataforma, pero podria no ser el caso
-            const directAssets = "/assets/ejemploPhaser"
+            const directAssets = "https://saramm3.github.io/juegos/EjemploPhaser/assets"
+            const directAssetsPersonajes = "https://saramm3.github.io/juegos/assetsPersonajes"
 
             //Cargar recursos
             this.load.image('sky', directAssets + '/sky.png');
@@ -18,8 +20,8 @@ var nuevaPartida
             this.load.image('bomb', directAssets + '/bomb.png');
 
             //Fotogramas sprite jugador (se usaran para animacion)
-            this.load.spritesheet('dude', 
-            directAssets +personaje,//'/dude.png',
+            this.load.spritesheet('player', 
+            directAssetsPersonajes + personaje,
                 { frameWidth: 45, frameHeight: 38 }
             );
         }
@@ -40,7 +42,7 @@ var nuevaPartida
             this.platforms.create(750, 220, 'ground');
 
             //Creamos sprite jugador
-            this.player = this.physics.add.sprite(100, 450, 'dude')
+            this.player = this.physics.add.sprite(100, 450, 'player')
             this.player.setBounce(0.2);  //Al aterrizar tras saltar
             this.player.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
             this.player.body.setGravityY(300)
@@ -48,14 +50,14 @@ var nuevaPartida
             //Creamos las animaciones del jugador:
             this.anims.create({
                 key: 'left',    //Al ir a la izquierda
-                frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),  //Usa fotogramas 0-3
+                frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),  //Usa fotogramas 0-3
                 frameRate: 6,  //Velocidad en fotogramas/segundo
                 repeat: -1  //La animacion debe volver a empezar cuando termine
             });
 
             this.anims.create({
                 key: 'turn',    //Al girar
-                frames: this.anims.generateFrameNumbers('dude', { start: 4, end: 8 }),
+                frames: this.anims.generateFrameNumbers('player', { start: 4, end: 8 }),
                 frameRate: 6,
                repeat: -1  //La animacion debe volver a empezar cuando termine
 
@@ -63,7 +65,7 @@ var nuevaPartida
 
             this.anims.create({
                 key: 'right',   //Al ir a la derecha
-                frames: this.anims.generateFrameNumbers('dude', { start: 9, end: 12 }),
+                frames: this.anims.generateFrameNumbers('player', { start: 9, end: 12 }),
                 frameRate: 6,
                 repeat: -1
             });            
@@ -147,7 +149,7 @@ var nuevaPartida
             //Para saltar. Solo puede si esta tocando el suelo
             if ( (this.cursors.up.isDown || this.keyW.isDown ) && this.player.body.touching.down){
                 this.player.setVelocityY(-430);
-                               this.player.anims.play('turn', true);
+                this.player.anims.play('turn', true);
 
             }        
         }
@@ -175,18 +177,14 @@ var nuevaPartida
         fGameOver(){
             this.gameOver = true;
             //Tras game over: Se emite evento game over
-                gameOverEvento(this.score)
-
-            //Esta opcion refresca la pagina entera. Tambien sirve, pero lo otro es mejor
-            //location.reload();    
-            
+            gameOverEvento(this.score)
+   
             //Reiniciamos tras muerte
             this.gameRestart()
         }
 
         gameRestart(){
             this.scene.restart();
-            //console.log(this.gameOver);
             this.gameOver = false
 
             //Emitimos evento de que se crea una nueva partida para avisar
@@ -219,7 +217,6 @@ var nuevaPartida
             bomb.setBounce(1);
             bomb.setCollideWorldBounds(true);
             bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-
         }
        
     }
@@ -254,24 +251,28 @@ var nuevaPartida
 
     };
 
-        /**
-         * Funcion que dado el nombre del personaje elegido devuelve el sprite
-         * Esta funcion debe ser exclusiva de cada juego, por si el creador decide
-         * usar sus propios sprites
-         * @param personajeArg 
-         */
-        function getSprite(personajeArg){
-            console.log("EN GETSPRITE "+ personajeArg)
+/**
+ * Funcion que dado el nombre del personaje elegido devuelve el sprite
+ * Esta funcion debe ser exclusiva de cada juego, por si el creador decide
+ * usar sus propios sprites
+ * @param personajeArg 
+ */
+function getSprite(personajeArg) {
+    console.log("EN GETSPRITE " + personajeArg)
 
-        //TODO: Dejar mas bonito cuando vea que funciona
-        if (personajeArg == "Monarca")
-            return "/rey.png"
+    // Lista con los personajes para los cuales este juego tiene sprites
+    let personajesSoportados = ["Monarca", "Artista"]
 
-        if (personajeArg == "Artista")
-            return "/artista.png"
-            
-        return "/default.png"
+    if (personajesSoportados.includes(personajeArg)){
+        return personajeArg + ".png"
     }
+
+    // Si el jugador no tiene personaje o este no esta entre los personajes que tienen sprite diseñado
+    else {
+        return "/default.png"  
+    }
+    
+}
 
    /**
    * Funcion que inicializa el juego y lo devuelve. Tambien realiza otras

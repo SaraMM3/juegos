@@ -436,7 +436,7 @@ class Example extends Phaser.Scene {
         this.physics.pause();
 
         // Elementos a eliminar
-        let spritesReset = ["pezRosa", "pezAzul", "pezRaro", "player", "pezGlobo"]
+        let spritesReset = ["pezRosa", "pezAzul", "pezRaro", "player", "pezGlobo", null]
 
         // Destruimos todos los sprites para volver a iniciar
         let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite && spritesReset.includes(x.texture.key));

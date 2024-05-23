@@ -227,7 +227,7 @@ function getSprite(personajeArg) {
     let personajesSoportados = ["Monarca"]
 
     if (personajesSoportados.includes(personajeArg)){
-        return personajeArg + ".png"
+        return "/" + personajeArg + ".png"
     }
 
     // Si el jugador no tiene personaje o este no esta entre los personajes que tienen sprite diseñado

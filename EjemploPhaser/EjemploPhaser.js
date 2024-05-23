@@ -1,3 +1,8 @@
+//TODO: Ver si esto funciona para solucionar problema de phaser not defined. Pq en ejemplo funcionamiento estan estas lineas y no falla
+//const Phaser = require('//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js')
+var script = document.createElement("script");  // create a script DOM node
+script.src = "https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js";  // set its src to the provided URL
+
 // Variable que guardara el personaje elegido, para poder usar el sprite adecuado
 var personaje = ""
 // Variables que fuardaran los callbacks de los eventos, para comunicarlos a la plataforma

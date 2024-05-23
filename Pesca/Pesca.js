@@ -519,7 +519,7 @@ function getSprite(personajeArg) {
 
     // Si el jugador no tiene personaje o este no esta entre los personajes que tienen sprite diseñado
     else {
-        return "/default.png"  
+        return "/Default.png"  
     }
     
 }

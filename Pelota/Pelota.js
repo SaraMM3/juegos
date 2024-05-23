@@ -218,10 +218,18 @@ const config = {
 function getSprite(personajeArg) {
     console.log("EN GETSPRITE " + personajeArg)
 
-    if (personajeArg == "Monarca")
-        return "/rey.png"
+    // Lista con los personajes para los cuales este juego tiene sprites
+    let personajesSoportados = ["Monarca"]
 
-    return "/marron.png"
+    if (personajesSoportados.includes(personajeArg)){
+        return personajeArg + ".png"
+    }
+
+    // Si el jugador no tiene personaje o este no esta entre los personajes que tienen sprite diseñado
+    else {
+        return "/Default.png"  
+    }
+    
 }
 
 /**

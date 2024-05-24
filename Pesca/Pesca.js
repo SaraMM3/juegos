@@ -440,16 +440,20 @@ class Example extends Phaser.Scene {
 
         // Destruimos todos los sprites para volver a iniciar
         let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite && spritesReset.includes(x.texture.key));
-        let debug = []
+        //let debug = []
         this.children.list.forEach( x => {
-            debug.push(x.texture.key)
+            if (x.texture.key != "ground"){
+                //debug.push(x.texture)
+                console.log("Destruyendo " + x.texture)
+                x.destroy()   
+            }
+            
         });
-        console.log("debug: " + debug)
+        //console.log("debug: " + debug)
 	    console.log(allSprites)
 	    console.log(this.children.list)
-	    console.log(this.children.list[0].texture)
-        allSprites.forEach(x =>{ x.destroy() 
-			       console.log("Destruyendo " + x)} );
+	    //console.log(this.children.list[0].texture)
+        //allSprites.forEach(x =>{ x.destroy() ; console.log("Destruyendo " + x)} );
 
         // Quitamos el texto anterior
         this.scoreText.destroy()

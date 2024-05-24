@@ -440,12 +440,7 @@ class Example extends Phaser.Scene {
         // Paramos la fisica
         this.physics.pause();
 
-        // Elementos a eliminar
-        let spritesReset = ["pezRosa", "pezAzul", "pezRaro", "player", "pezGlobo", null]
-
-        // Destruimos todos los sprites para volver a iniciar
-        let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite && spritesReset.includes(x.texture.key));
-        //let debug = []
+        // Destruimos todos los sprites para volver a iniciar. Despues, vaciamos la lista de sprites
         console.log(spritesABorrar)
         spritesABorrar.forEach( x => {
             if (x.texture.key != "ground"){
@@ -455,11 +450,7 @@ class Example extends Phaser.Scene {
             }
             
         });
-        //console.log("debug: " + debug)
-	    //console.log(allSprites)
-	    //console.log(this.children.list)
-	    // console.log(this.children.list[0].texture)
-        //allSprites.forEach(x =>{ x.destroy() ; console.log("Destruyendo " + x)} );
+        spritesABorrar = []
 
         // Quitamos el texto anterior
         this.scoreText.destroy()

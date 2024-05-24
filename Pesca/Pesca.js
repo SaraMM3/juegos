@@ -452,7 +452,7 @@ class Example extends Phaser.Scene {
         //console.log("debug: " + debug)
 	    console.log(allSprites)
 	    console.log(this.children.list)
-	    //console.log(this.children.list[0].texture)
+	    // console.log(this.children.list[0].texture)
         //allSprites.forEach(x =>{ x.destroy() ; console.log("Destruyendo " + x)} );
 
         // Quitamos el texto anterior

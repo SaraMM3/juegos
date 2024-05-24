@@ -9,6 +9,7 @@ var gameOverEvento
 var nuevaPartida
 var personaje
 
+var spritesABorrar = []
 
 /* Se puede cambiar nombre Example (si es coherente con el especificado en config posteriormente)*/
 class Example extends Phaser.Scene {
@@ -248,6 +249,8 @@ class Example extends Phaser.Scene {
         this.player.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
         this.player.body.setGravityY(10)
 
+        // NUEVO
+        spritesABorrar.push(this.player)
         
         //Añadimos puntuacion
         this.score = 0;
@@ -310,6 +313,8 @@ class Example extends Phaser.Scene {
 
         this.nuevoPez.setVelocityX(velX);
         this.physics.add.overlap(this.player, this.nuevoPez, collectFish, null, this)
+
+        spritesABorrar.push(this.nuevoPez)
     }
 
 
@@ -441,7 +446,8 @@ class Example extends Phaser.Scene {
         // Destruimos todos los sprites para volver a iniciar
         let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite && spritesReset.includes(x.texture.key));
         //let debug = []
-        this.children.list.forEach( x => {
+        console.log(spritesABorrar)
+        spritesABorrar.forEach( x => {
             if (x.texture.key != "ground"){
                 //debug.push(x.texture)
                 console.log("Destruyendo " + x.texture)
@@ -450,8 +456,8 @@ class Example extends Phaser.Scene {
             
         });
         //console.log("debug: " + debug)
-	    console.log(allSprites)
-	    console.log(this.children.list)
+	    //console.log(allSprites)
+	    //console.log(this.children.list)
 	    // console.log(this.children.list[0].texture)
         //allSprites.forEach(x =>{ x.destroy() ; console.log("Destruyendo " + x)} );
 

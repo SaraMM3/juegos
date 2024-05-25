@@ -68,6 +68,21 @@ class Example extends Phaser.Scene{
             repeat: -1
         });
 
+        // Animacion del boton
+        this.anims.create({
+            key: 'botonJugarVerde',
+            frames: this.anims.generateFrameNumbers('botonJugar', { start: 0, end: 0 }), 
+            frameRate: 1,
+            repeat: 1
+        });
+
+        this.anims.create({
+            key: 'botonJugarRosa',
+            frames: this.anims.generateFrameNumbers('botonJugar', { start: 1, end: 1 }), 
+            frameRate: 1,
+            repeat: 1
+        });
+
         // Ponemos el menu. El texto depende de si es la primera partida o no
         if (this.primeraPartida){
             this.crearMenu("De al boton para comenzar a jugar!")

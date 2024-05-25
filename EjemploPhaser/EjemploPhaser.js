@@ -83,9 +83,8 @@ class Example extends Phaser.Scene{
             repeat: 1
         });
 
-        // Ponemos el menu. El texto depende de si es la primera partida o no
-        this.crearMenu("De al boton para comenzar a jugar!", this.onClickBotonJugar())
-
+        // Ponemos el menu
+        this.crearMenu("De al boton para comenzar a jugar!", true)
 
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -196,7 +195,7 @@ class Example extends Phaser.Scene{
         //Tras game over: Se emite evento game over
         gameOverEvento(this.score)
 
-        this.crearMenu("Puntuación: " + this.score + ". De al boton para volver a jugar!", this.gameRestart())
+        this.crearMenu("Puntuación: " + this.score + ". De al boton para volver a jugar!", false)
     };
 
     
@@ -207,18 +206,13 @@ class Example extends Phaser.Scene{
      * @param texto Texto del menu
      * @param onClick Funcion a ejecutar al dar a boton
      */
-    crearMenu(texto, onClick){
+    crearMenu(texto, inicio){
         this.menu = true    // Para saber si estamos en el menu o no
         this.textoMenu = this.add.text(80, 100, texto, { fontSize: '32px', fill: '#000' });
 
         // Creamos el boton 
         this.botonJugar = this.add.sprite(400, 300, 'botonJugar');  // Nota: Para que el boton este animado, debe ser sprite, no image
         this.botonJugar.setInteractive()
-
-        // Asignamos eventos al boton creado
-        this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
-            onClick()
-        })
 
         this.botonJugar.on("pointerover", () => {    // Cuando se hace hover sobre el, se vuelve rosa
             this.botonJugar.anims.play('botonJugarRosa', true);
@@ -227,6 +221,23 @@ class Example extends Phaser.Scene{
         this.botonJugar.on("pointerout", () => {    // Cuando se sale del hover sobre el, vuelve a ser verde
             this.botonJugar.anims.play('botonJugarVerde', true);
         })
+
+        // Asignamos eventos al boton creado segun si es el menu inicial o el que se muestra tras gameover
+        if (inicio){
+            this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+                this.onClickBotonJugar()
+            })
+        }
+
+        // Si era menu tras muerte
+        else{
+            this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, reinicia la partida 
+                this.gameRestart()
+            })
+        }
+
+
+
     }
 
 

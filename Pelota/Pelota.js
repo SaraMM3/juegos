@@ -80,6 +80,10 @@ class Example extends Phaser.Scene {
             repeat: -1
         });
 
+        // Ponemos el menu
+        this.crearMenu("De al boton para comenzar a jugar!", true)
+
+
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();
 

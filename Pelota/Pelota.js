@@ -92,7 +92,7 @@ class Example extends Phaser.Scene {
 
     update() {
 
-        if (!menu){
+        if (!this.menu){
             //Comprueba si esta pulsando la tecla izquierda
             if (this.cursors.left.isDown || this.keyA.isDown) {
                 this.player.setVelocityX(-200);

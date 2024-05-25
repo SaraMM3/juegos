@@ -24,6 +24,9 @@ class Example extends Phaser.Scene{
         this.load.image('star', directAssets + '/star.png');
         this.load.image('bomb', directAssets + '/bomb.png');
 
+        // Boton menu
+        this.load.spritesheet('botonJugar', directAssets + '/boton_jugar.png', { frameWidth: 344, frameHeight: 160 });
+
         //Fotogramas sprite jugador (se usaran para animacion)
         this.load.spritesheet('player', directAssetsPersonajes + personaje, { frameWidth: 45, frameHeight: 38 });
     }
@@ -65,8 +68,13 @@ class Example extends Phaser.Scene{
             repeat: -1
         });
 
-        // Ponemos el menu
-        this.crearMenu("De al boton para comenzar a jugar!")
+        // Ponemos el menu. El texto depende de si es la primera partida o no
+        if (this.primeraPartida){
+            this.crearMenu("De al boton para comenzar a jugar!")
+        }
+        else{
+            this.crearMenu("Puntuación: " + this.score + ". De al boton para volver a jugar!")
+        }
 
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();

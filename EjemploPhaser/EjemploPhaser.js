@@ -84,12 +84,8 @@ class Example extends Phaser.Scene{
         });
 
         // Ponemos el menu. El texto depende de si es la primera partida o no
-        if (this.primeraPartida){
-            this.crearMenu("De al boton para comenzar a jugar!")
-        }
-        else{
-            this.crearMenu("Puntuación: " + this.score + ". De al boton para volver a jugar!")
-        }
+        this.crearMenu("De al boton para comenzar a jugar!", this.onClickBotonJugar())
+
 
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -200,13 +196,18 @@ class Example extends Phaser.Scene{
         //Tras game over: Se emite evento game over
         gameOverEvento(this.score)
 
-        this.gameRestart()
+        this.crearMenu("Puntuación: " + this.score + ". De al boton para volver a jugar!", this.gameRestart())
     };
 
     
 
-    // Añadido al crear menu
-    crearMenu(texto){
+    // Desde aqui: Añadido al meter menu
+    /**
+     * Funcion que crea el menu, tanto inicial como el que aparece al perder
+     * @param texto Texto del menu
+     * @param onClick Funcion a ejecutar al dar a boton
+     */
+    crearMenu(texto, onClick){
         this.menu = true    // Para saber si estamos en el menu o no
         this.textoMenu = this.add.text(80, 100, texto, { fontSize: '32px', fill: '#000' });
 
@@ -216,7 +217,7 @@ class Example extends Phaser.Scene{
 
         // Asignamos eventos al boton creado
         this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
-            this.onClickBotonJugar()
+            onClick()
         })
 
         this.botonJugar.on("pointerover", () => {    // Cuando se hace hover sobre el, se vuelve rosa

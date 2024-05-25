@@ -195,7 +195,7 @@ class Example extends Phaser.Scene{
         //Tras game over: Se emite evento game over
         gameOverEvento(this.score)
 
-        this.crearMenu("Puntuación: " + this.score + ". De al boton para volver a jugar!", false)
+        this.crearMenu("Pulse para reiniciar la partida!", false)
     };
 
     

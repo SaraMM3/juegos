@@ -43,12 +43,6 @@ class Example extends Phaser.Scene{
         this.platforms.create(50, 250, 'ground');
         this.platforms.create(750, 220, 'ground');
 
-        //Creamos sprite jugador
-        this.player = this.physics.add.sprite(100, 450, 'player')
-        this.player.setBounce(0.2);  //Al aterrizar tras saltar
-        this.player.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
-        this.player.body.setGravityY(300)
-
         //Creamos las animaciones del jugador:
         this.anims.create({
             key: 'left',    //Al ir a la izquierda
@@ -62,7 +56,6 @@ class Example extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('player', { start: 4, end: 8 }),
             frameRate: 6,
             repeat: -1  //La animacion debe volver a empezar cuando termine
-
         });
 
         this.anims.create({
@@ -72,11 +65,8 @@ class Example extends Phaser.Scene{
             repeat: -1
         });
 
-        // Ponemos el menu TODO
-        // this.crearMenu("De al boton para comenzar a jugar!")
-        
-        //Añadimos colliders para ver si hay colision/superposicion entre jugador y suelo. Asi no atraviesa el suelo
-        this.physics.add.collider(this.player, this.platforms);
+        // Ponemos el menu
+        this.crearMenu("De al boton para comenzar a jugar!")
 
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -87,70 +77,37 @@ class Example extends Phaser.Scene{
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
 
-        //Creamos estrellas a recoger
-        this.stars = this.physics.add.group({
-            key: 'star',    //Clave de textura
-            repeat: 11,     //Al repetir 11 veces, obtenemos 12 elementos
-            setXY: { x: 12, y: 0, stepX: 70 }   //Establecer posicion de los 12 elementos
-        });
-
-        this.stars.children.iterate(function (child) {
-            //Para que reboten un numero aleatorio entre los dados
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-        });
-
-        //Collider para que no se caigan del mundo
-        this.physics.add.collider(this.stars, this.platforms);
-
-        //Comprobar si el personaje se superpone con alguna (las recoge)
-        //Entonces, ejecuta la funcion collectStar (presente mas abajo)
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-
-        //Añadimos puntuacion
-        this.score = 0;
-        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-    
-        //Añadimos enemigos (bombas)
-        this.bombs = this.physics.add.group();
-        this.physics.add.collider(this.bombs, this.platforms);
-        this.physics.add.collider(this.player, this.bombs, hitBomb, null, this);
-    
-
-        //Creamos boton de pausa
-        this.botonPausa = this.add.text(720, 10, 'PAUSA', { fill: '#000' })
-        .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
-        .on('pointerdown', () => this.pulsarBotonPausa() )   // Al pulsar boton, se llama funcion (definida fuera de create)
-        .on('pointerover', () => this.hoverBotonPausa() )    // Al hover sobre boton
-        .on('pointerout', () => this.restBotonPausa() )      // Al sacar el raton de encima del boton
-        .on('pointerup', () => this.hoverBotonPausa() )      // Al dejar de pulsar boton (al soltar)
     } 
 
     update (){   
-        //Comprueba si esta pulsando la tecla izquierda
-        if (this.cursors.left.isDown || this.keyA.isDown){
-            this.player.setVelocityX(-160); //Entonces aplica velocidad horizontal negativa
-            this.player.anims.play('left', true);   //Ejecuta la animacion de moverse a la izquierda
+
+        if (!this.menu){
+            //Comprueba si esta pulsando la tecla izquierda
+            if (this.cursors.left.isDown || this.keyA.isDown){
+                this.player.setVelocityX(-160); //Entonces aplica velocidad horizontal negativa
+                this.player.anims.play('left', true);   //Ejecuta la animacion de moverse a la izquierda
+            }
+
+            //Comprueba si esta pulsando la tecla derecha
+            else if (this.cursors.right.isDown || this.keyD.isDown){
+                this.player.setVelocityX(160);
+                this.player.anims.play('right', true);
+            }
+
+            //Si no esta pulsando nada
+            else{
+                this.player.setVelocityX(0);
+                this.player.anims.play('turn', true);
+            }
+
+            //Para saltar. Solo puede si esta tocando el suelo
+            if ( (this.cursors.up.isDown || this.keyW.isDown ) && this.player.body.touching.down){
+                this.player.setVelocityY(-430);
+                this.player.anims.play('turn', true);
+            }  
+
         }
-
-        //Comprueba si esta pulsando la tecla derecha
-        else if (this.cursors.right.isDown || this.keyD.isDown){
-            this.player.setVelocityX(160);
-            this.player.anims.play('right', true);
-        }
-
-
-        //Si no esta pulsando nada
-        else{
-            this.player.setVelocityX(0);
-            this.player.anims.play('turn', true);
-        }
-
-        //Para saltar. Solo puede si esta tocando el suelo
-        if ( (this.cursors.up.isDown || this.keyW.isDown ) && this.player.body.touching.down){
-            this.player.setVelocityY(-430);
-            this.player.anims.play('turn', true);
-
-        }        
+      
     }
 
     //Funciones para boton, segun la interaccion con el usuario (si hover, pulsa, ...)
@@ -167,15 +124,6 @@ class Example extends Phaser.Scene{
         this.botonPausa.setStyle({ fill: '#000'});
     }
 
-
-    fGameOver(){
-        this.gameOver = true;
-        //Tras game over: Se emite evento game over
-        gameOverEvento(this.score)
-
-        //Reiniciamos tras muerte
-        this.gameRestart()
-    }
 
     gameRestart(){
         this.scene.restart();
@@ -215,20 +163,129 @@ class Example extends Phaser.Scene{
         
     }
 
+
+    //Cuando le da una bomba al jugador, ocurre game over
+    hitBomb (player, bomb){
+        this.physics.pause();
+    
+        player.setTint(0xff0000);
+        player.anims.play('turn');
+
+        // Destruimos sprites???
+        this.gameOver = true;
+        
+        //Tras game over: Se emite evento game over
+        gameOverEvento(this.score)
+
+        this.gameRestart()
+    };
+
+    
+
+    // Añadido al crear menu
+    crearMenu(texto){
+        this.menu = true    // Para saber si estamos en el menu o no
+        this.textoMenu = this.add.text(80, 100, texto, { fontSize: '32px', fill: '#000' });
+
+        // Creamos el boton 
+        this.botonJugar = this.add.sprite(400, 300, 'botonJugar');  // Nota: Para que el boton este animado, debe ser sprite, no image
+        this.botonJugar.setInteractive()
+
+        // Asignamos eventos al boton creado
+        this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+            this.onClickBotonJugar()
+        })
+
+        this.botonJugar.on("pointerover", () => {    // Cuando se hace hover sobre el, se vuelve rosa
+            this.botonJugar.anims.play('botonJugarRosa', true);
+        })
+
+        this.botonJugar.on("pointerout", () => {    // Cuando se sale del hover sobre el, vuelve a ser verde
+            this.botonJugar.anims.play('botonJugarVerde', true);
+        })
+    }
+
+
+    /**
+     * Funcion que se ejecuta al pulsar el boton de jugar
+     */
+    onClickBotonJugar(){
+        this.destruirMenu() // Destruimos el menu
+
+        this.physics.resume()   // Si fisica estaba parada, la reanudamos
+
+        // Si no es la primera partida, avisamos para poder guardarla en el historial
+        if (!this.primeraPartida){
+			nuevaPartida()
+        }
+
+        // Comenzamos la partida
+        this.partida()
+    }
+
+
+    /**
+     * Funcion que destruye los elementos del menu
+     */
+    destruirMenu(){
+        this.menu = false
+        this.botonJugar.destroy()
+        this.textoMenu.destroy()
+    }
+
+    partida(){
+        this.primeraPartida = false
+
+        //Creamos estrellas a recoger
+        this.stars = this.physics.add.group({
+            key: 'star',    //Clave de textura
+            repeat: 11,     //Al repetir 11 veces, obtenemos 12 elementos
+            setXY: { x: 12, y: 0, stepX: 70 }   //Establecer posicion de los 12 elementos
+        });
+
+        //Creamos sprite jugador
+        this.player = this.physics.add.sprite(100, 450, 'player')
+        this.player.setBounce(0.2);  //Al aterrizar tras saltar
+        this.player.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
+        this.player.body.setGravityY(300)
+
+        this.stars.children.iterate(function (child) {
+            //Para que reboten un numero aleatorio entre los dados
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        });
+
+        //Collider para que no se caigan del mundo
+        this.physics.add.collider(this.stars, this.platforms);
+
+        //Comprobar si el personaje se superpone con alguna (las recoge)
+        //Entonces, ejecuta la funcion collectStar (presente mas abajo)
+        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+
+        //Añadimos puntuacion
+        this.score = 0;
+        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+    
+        //Añadimos enemigos (bombas)
+        this.bombs = this.physics.add.group();
+        this.physics.add.collider(this.bombs, this.platforms);
+        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+    
+                
+        //Añadimos colliders para ver si hay colision/superposicion entre jugador y suelo. Asi no atraviesa el suelo
+        this.physics.add.collider(this.player, this.platforms);
+
+
+        //Creamos boton de pausa
+        this.botonPausa = this.add.text(720, 10, 'PAUSA', { fill: '#000' })
+        .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
+        .on('pointerdown', () => this.pulsarBotonPausa() )   // Al pulsar boton, se llama funcion (definida fuera de create)
+        .on('pointerover', () => this.hoverBotonPausa() )    // Al hover sobre boton
+        .on('pointerout', () => this.restBotonPausa() )      // Al sacar el raton de encima del boton
+        .on('pointerup', () => this.hoverBotonPausa() )      // Al dejar de pulsar boton (al soltar)
+
+    }
+
 }
-
-
-
-function hitBomb (player, bomb){
-    this.physics.pause();
-
-    player.setTint(0x000000);   // TODO
-    player.anims.play('turn');
-
-    //Cuando le da una bomba, ocurre game over
-    this.fGameOver();
-};
-
 
 
 const config = {

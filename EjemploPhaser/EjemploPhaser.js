@@ -189,12 +189,12 @@ class Example extends Phaser.Scene{
         player.setTint(0xff0000);
         player.anims.play('turn');
 
-        // Destruimos sprites???
         this.gameOver = true;
         
         //Tras game over: Se emite evento game over
         gameOverEvento(this.score)
 
+        // Creamos menu para confirmar si quiere volver a empezar
         this.crearMenu("Pulse para reiniciar la partida!", false)
     };
 
@@ -235,8 +235,6 @@ class Example extends Phaser.Scene{
                 this.gameRestart()
             })
         }
-
-
 
     }
 

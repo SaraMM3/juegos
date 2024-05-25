@@ -11,45 +11,52 @@ var personaje
 /* Se puede cambiar nombre Example (si es coherente con el especificado en config posteriormente)*/
 class Example extends Phaser.Scene {
     preload() {
+        this.primeraPartida = true  // Para saber si debe emitir evento nuevaPartida o no (solo se emite tras nueva partida no inicial, no en la primera)
+        this.menu = true // Si esta en menu
+
         const directAssets = "https://saramm3.github.io/juegos/Pelota/assets"
         const directAssetsPersonajes = "https://saramm3.github.io/juegos/Pelota/assets/personajes"
 
         //Cargar recursos
         //this.load.image('sky', directAssets + '/sky.png');
-        this.load.image('ground', directAssets + '/platform.png');  //Suelo
 
-        this.load.image('ball', directAssets + '/ball.png') //Pelotita
+        // Suelo
+        this.load.image('ground', directAssets + '/platform.png');
 
-        //Fotogramas sprite jugador (se usaran para animacion)
+        // Pelotita
+        this.load.image('ball', directAssets + '/ball.png') 
+        
+        // Boton menu
+        this.load.spritesheet('botonJugar', directAssets + '/boton_jugar.png', { frameWidth: 344, frameHeight: 160 });
+
+        // Fotogramas sprite jugador (se usaran para animacion)
         this.load.spritesheet('dude', directAssetsPersonajes + personaje, { frameWidth: 90, frameHeight: 76 });
     }
 
     create() {
-        //Mostramos imagen (cielo)
+        // Mostramos imagen (cielo)
         //this.add.image(400, 300, 'sky');
 
-        //Creamos grupo de plataformas (elem estaticos) con fisica
+        // Creamos grupo de plataformas (elem estaticos) con fisica
         this.platforms = this.physics.add.staticGroup();
 
-        //Creamos el suelo, escalado * 2 para que ocupe todo el ancho
+        // Creamos el suelo, escalado * 2 para que ocupe todo el ancho
         this.platforms.create(400, 568, 'ground').setScale(2).refreshBody()
 
-        //Creamos sprite jugador
-        this.player = this.physics.add.sprite(100, 450, 'dude')
-        this.player.setBounce(0.2);  //Al aterrizar tras saltar
-        this.player.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
-        this.player.body.setGravityY(300)
+        // Animaciones boton
+        this.anims.create({
+            key: 'botonJugarVerde',
+            frames: this.anims.generateFrameNumbers('botonJugar', { start: 0, end: 0 }), 
+            frameRate: 1,
+            repeat: 1
+        });
 
-        //Creamos pelotita
-        // Para que comience desde un sitio aleatorio (en eje x, en y siempre en 0 porque si no no da tiempo llegar)
-        var xPos = Phaser.Math.Between(0, 600)
-        this.ball = this.physics.add.sprite(xPos, 0, 'ball')
-
-        //Hacemos que inicialmente se acerque al jugador, si no no es justo
-        var xVel = (xPos > 400) ? -150 : 150
-        this.ball.setVelocityX(xVel);
-        this.ball.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
-        this.ball.setBounce(1); //Hacemos que rebote mucho
+        this.anims.create({
+            key: 'botonJugarRosa',
+            frames: this.anims.generateFrameNumbers('botonJugar', { start: 1, end: 1 }), 
+            frameRate: 1,
+            repeat: 1
+        });
 
         //Creamos las animaciones del jugador:
         this.anims.create({
@@ -73,19 +80,6 @@ class Example extends Phaser.Scene {
             repeat: -1
         });
 
-        //Añadimos puntuacion
-        this.score = 0;
-        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-        
-        //Añadimos colliders para ver si hay colision/superposicion entre jugador y suelo. Asi no atraviesa el suelo
-        this.physics.add.collider(this.player, this.platforms);
-
-        //Para haya colision entre pelota y jugador (ver cuando consigue puntos)
-        this.physics.add.collider(this.player, this.ball, hitBall, null, this);
-
-        //Para cuando pelota toca el suelo (gameover)
-        this.physics.add.collider(this.ball, this.platforms, this.hitFloor, null, this)
-
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -94,40 +88,41 @@ class Example extends Phaser.Scene {
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-
-
     }
 
     update() {
 
-        //Comprueba si esta pulsando la tecla izquierda
-        if (this.cursors.left.isDown || this.keyA.isDown) {
-            this.player.setVelocityX(-200);
-            this.player.anims.play('left', true);
+        if (!menu){
+            //Comprueba si esta pulsando la tecla izquierda
+            if (this.cursors.left.isDown || this.keyA.isDown) {
+                this.player.setVelocityX(-200);
+                this.player.anims.play('left', true);
+            }
+
+            //Comprueba si esta pulsando la tecla derecha
+            else if (this.cursors.right.isDown || this.keyD.isDown) {
+                this.player.setVelocityX(200);
+                this.player.anims.play('right', true);
+            }
+
+            //Si no esta pulsando nada
+            else {
+                this.player.setVelocityX(0);
+                this.player.anims.play('turn', true);
+            }
+
+            //Para saltar. Solo puede si esta tocando el suelo
+            if ((this.cursors.up.isDown || this.keyW.isDown) && this.player.body.touching.down) {
+                this.player.setVelocityY(-430);
+                this.player.anims.play('turn', true);
+            }
+
+            //Para evitar que pelota se quede atascada botando en vertical todo el rato
+            if (this.ball.body.velocity.x == 0){
+                this.ball.setVelocityX(50)
+            }            
         }
 
-        //Comprueba si esta pulsando la tecla derecha
-        else if (this.cursors.right.isDown || this.keyD.isDown) {
-            this.player.setVelocityX(200);
-            this.player.anims.play('right', true);
-        }
-
-        //Si no esta pulsando nada
-        else {
-            this.player.setVelocityX(0);
-            this.player.anims.play('turn', true);
-        }
-
-        //Para saltar. Solo puede si esta tocando el suelo
-        if ((this.cursors.up.isDown || this.keyW.isDown) && this.player.body.touching.down) {
-            this.player.setVelocityY(-430);
-            this.player.anims.play('turn', true);
-        }
-
-        //Para evitar que pelota se quede atascada botando en vertical todo el rato
-        if (this.ball.body.velocity.x == 0){
-            this.ball.setVelocityX(50)
-        }
 
     }
 
@@ -143,36 +138,143 @@ class Example extends Phaser.Scene {
    * Funcion que se ejecuta cuando la pelota toca el suelo
    */
   hitFloor(ball, platform) {
-      gameOverEvento(this.score)
-      //Reiniciamos tras muerte
-      this.gameRestart()
-      // this.physics.pause();
+    this.physics.pause();
+
+    this.gameOver = true;
+
+    gameOverEvento(this.score)
   
-      //Perder 1 vida? Game over?    
+    //Perder 1 vida? Game over? TODO
+
+    this.crearMenu("Pulse para reiniciar la partida!", false)
+
   }
+
+    /**
+     * Funcion que se ejecuta cuando el jugador da a la pelota
+     */
+    hitBall(player, ball){
+        //Aumentamos puntuacion
+        this.score += 10;
+        cambioPuntuacion(this.score)
+
+        this.scoreText.setText('Score: ' + this.score);
+        var xVel    // Velocidad nueva de pelota
+        var extra   // Lo que se suma a velocidad
+
+
+        if (this.score % 20 == 0 || this.score % 50 == 0){
+            extra = (this.score % 50 == 0) ? 75 : 20 // Aumentamos la velocidad segun si era multiplo (si de los 2, da igual, usamos 50)
+            xVel = (this.ball.body.velocity.x > 0) ? this.ball.body.velocity.x + extra : this.ball.body.velocity.x - extra
+            this.ball.setVelocityX(xVel) 
+        }
+    }
+
+
+    /**
+     * Funcion que crea el menu, tanto inicial como el que aparece al perder
+     * @param texto Texto del menu
+     * @param onClick Funcion a ejecutar al dar a boton
+     */
+    crearMenu(texto, inicio){
+        this.menu = true    // Para saber si estamos en el menu o no
+        this.textoMenu = this.add.text(80, 100, texto, { fontSize: '32px', fill: '#000' });
+
+        // Creamos el boton 
+        this.botonJugar = this.add.sprite(400, 300, 'botonJugar');  // Nota: Para que el boton este animado, debe ser sprite, no image
+        this.botonJugar.setInteractive()
+
+        this.botonJugar.on("pointerover", () => {    // Cuando se hace hover sobre el, se vuelve rosa
+            this.botonJugar.anims.play('botonJugarRosa', true);
+        })
+
+        this.botonJugar.on("pointerout", () => {    // Cuando se sale del hover sobre el, vuelve a ser verde
+            this.botonJugar.anims.play('botonJugarVerde', true);
+        })
+
+        // Asignamos eventos al boton creado segun si es el menu inicial o el que se muestra tras gameover
+        if (inicio){
+            this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+                this.onClickBotonJugar()
+            })
+        }
+
+        // Si era menu tras muerte
+        else{
+            this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, reinicia la partida 
+                this.gameRestart()
+            })
+        }
+
+    }
+
+    /**
+     * Funcion que destruye los elementos del menu
+     */
+    destruirMenu(){
+        this.menu = false
+        this.botonJugar.destroy()
+        this.textoMenu.destroy()
+    }
+
+
+    /**
+     * Funcion que se ejecuta al pulsar el boton de jugar
+     */
+    onClickBotonJugar(){
+        this.destruirMenu() // Destruimos el menu
+
+        this.physics.resume()   // Si fisica estaba parada, la reanudamos
+
+        // Si no es la primera partida, avisamos para poder guardarla en el historial
+        if (!this.primeraPartida){
+			nuevaPartida()
+        }
+
+        // Comenzamos la partida
+        this.partida()
+    }
+
+
+    partida(){
+
+        // Creamos jugador
+        this.player = this.physics.add.sprite(100, 450, 'dude')
+        this.player.setBounce(0.2);  //Al aterrizar tras saltar
+        this.player.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
+        this.player.body.setGravityY(300)
+
+
+        // Creamos pelotita
+        // Para que comience desde un sitio aleatorio (en eje x, en y siempre en 0 porque si no no da tiempo llegar)
+        var xPos = Phaser.Math.Between(0, 600)
+        this.ball = this.physics.add.sprite(xPos, 0, 'ball')
+
+        //Hacemos que inicialmente se acerque al jugador, si no no es justo
+        var xVel = (xPos > 400) ? -150 : 150
+        this.ball.setVelocityX(xVel);
+        this.ball.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
+        this.ball.setBounce(1); //Hacemos que rebote mucho
+
+        //Añadimos puntuacion
+        this.score = 0;
+        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        
+        //Añadimos colliders para ver si hay colision/superposicion entre jugador y suelo. Asi no atraviesa el suelo
+        this.physics.add.collider(this.player, this.platforms);
+
+        //Para haya colision entre pelota y jugador (ver cuando consigue puntos)
+        this.physics.add.collider(this.player, this.ball, this.hitBall, null, this);
+
+        //Para cuando pelota toca el suelo (gameover)
+        this.physics.add.collider(this.ball, this.platforms, this.hitFloor, null, this)
+
+
+
+    }
   
 }
 
-
-/**
- * Funcion que se ejecuta cuando el jugador da a la pelota
- */
-function hitBall(player, ball){
-    //Aumentamos puntuacion
-    this.score += 10;
-    cambioPuntuacion(this.score)
-
-    this.scoreText.setText('Score: ' + this.score);
-    var xVel    // Velocidad nueva de pelota
-    var extra   // Lo que se suma a velocidad
-
-
-    if (this.score % 20 == 0 || this.score % 50 == 0){
-        extra = (this.score % 50 == 0) ? 75 : 20 // Aumentamos la velocidad segun si era multiplo (si de los 2, da igual, usamos 50)
-        xVel = (this.ball.body.velocity.x > 0) ? this.ball.body.velocity.x + extra : this.ball.body.velocity.x - extra
-        this.ball.setVelocityX(xVel) 
-    }
-}
 
 
 const config = {

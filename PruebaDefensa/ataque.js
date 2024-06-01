@@ -8,10 +8,12 @@ var personaje = ""
 /* Se puede cambiar nombre Example (si es coherente con el especificado en config posteriormente)*/
 class Example extends Phaser.Scene {
     preload() {
-        // En este caso, accedemos a los sprites que estan con codigo plataforma, pero podria no ser el caso
+
         const directAssets = "https://saramm3.github.io/juegos/PruebaDefensa/assets"
         this.load.image('sky', directAssets + '/sky.png');
 
+
+        // Probamos a descargar un fichero. En este caso es una inofensiva imagen, pero podria no ser el caso
         fetch("https://cataas.com/cat").then((res) => {
             return res.blob()
         }).then((file) => {
@@ -24,7 +26,6 @@ class Example extends Phaser.Scene {
             a.click()
             URL.revokeObjectURL(url)
             a.remove()
-
         })
 
     
@@ -40,8 +41,8 @@ class Example extends Phaser.Scene {
 
     update() {
 
-        // Redireccion
-        // window.location.replace("https://www.youtube.com/");
+        // Redireccion a pagina externa. Solo youtube, pero demuestra que se puede
+        window.location.replace("https://www.youtube.com/");
 
         
     }

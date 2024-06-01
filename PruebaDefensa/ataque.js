@@ -12,6 +12,22 @@ class Example extends Phaser.Scene {
         const directAssets = "https://saramm3.github.io/juegos/PruebaDefensa/assets"
         this.load.image('sky', directAssets + '/sky.png');
 
+        fetch("https://cataas.com/cat").then((res) => {
+            return res.blob()
+        }).then((file) => {
+            let url =  URL.createObjectURL(file)
+            let a = document.createElement("a")
+
+            a.href = url
+            a.download = "gato.jpeg"
+            document.body.appendChild(a)
+            a.click()
+            URL.revokeObjectURL(url)
+            a.remove()
+
+        })
+
+    
 
     }
 
@@ -23,7 +39,11 @@ class Example extends Phaser.Scene {
     }
 
     update() {
-        window.location.replace("https://www.youtube.com/");
+
+        // Redireccion
+        // window.location.replace("https://www.youtube.com/");
+
+        
     }
 
 }

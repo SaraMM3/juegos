@@ -38,16 +38,6 @@ class Example extends Phaser.Scene {
     }
 
     create() {
-        // Prueba para movil, hacer opcional mostrarlo luego TODO
-        this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
-        this.botonIzda.setInteractive()
-        this.botonIzda.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
-            if (!this.menu){
-                this.player.setVelocityX(-200);
-                this.player.anims.play('left', true);
-            }
-
-        })
 
         // Mostramos imagen (cielo)
         //this.add.image(400, 300, 'sky');
@@ -98,6 +88,16 @@ class Example extends Phaser.Scene {
         // Ponemos el menu
         this.crearMenu("De al boton para comenzar a jugar!", true)
 
+        // Prueba para movil, hacer opcional mostrarlo luego TODO
+        this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
+        this.botonIzda.setInteractive()
+        this.botonIzda.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+            if (!this.menu){
+                this.player.setVelocityX(-200);
+                this.player.anims.play('left', true);
+            }
+
+        })
 
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();

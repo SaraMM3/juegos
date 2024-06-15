@@ -31,9 +31,24 @@ class Example extends Phaser.Scene {
 
         // Fotogramas sprite jugador (se usaran para animacion)
         this.load.spritesheet('dude', directAssetsPersonajes + personaje, { frameWidth: 90, frameHeight: 76 });
+
+        // Para movil
+        this.load.image('botonIzda', directAssets + '/izquierda.png');
+
     }
 
     create() {
+        // Prueba para movil, hacer opcional mostrarlo luego TODO
+        this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
+        this.botonIzda.setInteractive()
+        this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+            if (!this.menu){
+                this.player.setVelocityX(-200);
+                this.player.anims.play('left', true);
+            }
+
+        })
+
         // Mostramos imagen (cielo)
         //this.add.image(400, 300, 'sky');
 
@@ -243,7 +258,7 @@ class Example extends Phaser.Scene {
     partida(){
 
         // Creamos jugador
-        this.player = this.physics.add.sprite(100, 450, 'dude')
+        this.player = this.physics.add.sprite(400, 450, 'dude')
         this.player.setBounce(0.2);  //Al aterrizar tras saltar
         this.player.setCollideWorldBounds(true); //Para que colisione con limites del juego (no pueda salir de pantalla)
         this.player.body.setGravityY(300)

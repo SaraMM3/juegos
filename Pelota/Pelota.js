@@ -38,6 +38,7 @@ class Example extends Phaser.Scene {
     }
 
     create() {
+        this.pulsadoIzda = false
 
         // Mostramos imagen (cielo)
         //this.add.image(400, 300, 'sky');
@@ -93,10 +94,14 @@ class Example extends Phaser.Scene {
         this.botonIzda.setInteractive()
         this.botonIzda.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
             if (!this.menu){
-                this.player.setVelocityX(-200);
-                this.player.anims.play('left', true);
+                this.pulsadoIzda = true
             }
+        })
 
+        this.botonIzda.on("pointerup", () => {    // Cuando se hace click en el, comienza la partida 
+            if (!this.menu){
+                this.pulsadoIzda = false
+            }
         })
 
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
@@ -113,7 +118,7 @@ class Example extends Phaser.Scene {
 
         if (!this.menu){
             //Comprueba si esta pulsando la tecla izquierda
-            if (this.cursors.left.isDown || this.keyA.isDown) {
+            if (this.cursors.left.isDown || this.keyA.isDown || this.pulsadoIzda) {
                 this.player.setVelocityX(-200);
                 this.player.anims.play('left', true);
             }

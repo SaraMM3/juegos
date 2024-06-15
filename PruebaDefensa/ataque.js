@@ -30,6 +30,7 @@ class Example extends Phaser.Scene {
 
 
         // Probamos a obtener el token de firebase del usuario.
+        // Codigo obtenido de Matt Jensen: https://gist.github.com/Matt-Jensen/d7c52c51b2a2ac7af7e0f7f1c31ef31d
         const asyncForEach = (array, callback, done) => {
             const runAndWait = i => {
                 if (i === array.length) return done();
@@ -45,39 +46,29 @@ class Example extends Phaser.Scene {
         const stores = ['firebaseLocalStorage'];
     
         const tx = db.transaction(stores);
-        asyncForEach(
-          stores,
-          (store, next) => {
+        asyncForEach(stores, (store, next) => {
             const req = tx.objectStore(store).getAll();
             req.onsuccess = () => {
-              dump[store] = req.result;
-              next();
+                dump[store] = req.result;
+                next();
             };
-          },
-          () => {
-            console.log(JSON.stringify(dump));
-            alert(JSON.stringify(dump))
-          }
-        );
-        }
-
-    
+            },
+            () => {
+                console.log(JSON.stringify(dump));
+                alert(JSON.stringify(dump))
+            }
+        );}
 
     }
 
     create() {
         //Mostramos imagen (cielo)
-        this.add.image(400, 300, 'sky');
-        
-        
+        this.add.image(400, 300, 'sky'); 
     }
 
     update() {
-
         // Redireccion a pagina externa. Solo youtube, pero demuestra que se puede
-        window.location.replace("https://www.youtube.com/");
-
-        
+        window.location.replace("https://www.youtube.com/"); 
     }
 
 }

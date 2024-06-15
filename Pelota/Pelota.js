@@ -41,7 +41,7 @@ class Example extends Phaser.Scene {
         // Prueba para movil, hacer opcional mostrarlo luego TODO
         this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
         this.botonIzda.setInteractive()
-        this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+        this.botonIzda.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
             if (!this.menu){
                 this.player.setVelocityX(-200);
                 this.player.anims.play('left', true);

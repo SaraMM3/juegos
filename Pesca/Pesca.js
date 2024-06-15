@@ -455,6 +455,10 @@ const config = {
     width: 800,
     height: 600,
     backgroundColor: '#90a5e6',
+    scale: {
+        mode: Phaser.Scale.FIT, // Ajustar a tam ventana
+        autoCenter: Phaser.Scale.CENTER_BOTH    // Centrar en horiz y vert
+    },
     scene: Example,
     physics: {
         default: 'arcade',

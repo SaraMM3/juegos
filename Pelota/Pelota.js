@@ -368,10 +368,8 @@ const config = {
     height: 600,
     backgroundColor: '#CCCCFF', // Para color de fondo
     scale: {
-        // Fit to window
-        mode: Phaser.Scale.FIT,
-        // Center vertically and horizontally
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        mode: Phaser.Scale.FIT, // Ajustar a tam ventana
+        autoCenter: Phaser.Scale.CENTER_BOTH    // Centrar en horiz y vert
     },
     scene: Example,
     physics: {

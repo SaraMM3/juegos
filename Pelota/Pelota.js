@@ -209,9 +209,12 @@ class Example extends Phaser.Scene {
             })
 
             // Mostramos opcion habilitar movil
-            this.botonActivarMovil = this.add.text(80, 200, 'Pulsa aqui para controles móviles', { fill: '#000' })
+            this.botonActivarMovil = this.add.text(80, 200, 'Pulse aqui primero para controles móviles', { fontSize: '25px', fill: '#000' })
             .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
-            .on('pointerdown', () => this.habilitarControlesMoviles() )   // Al pulsar boton, se llama funcion
+            .on('pointerdown', () => {
+                this.habilitarControlesMoviles() 
+                this.botonActivarMovil.destroy()
+            })   // Al pulsar boton, se llama funcion
         }
 
         // Si era menu tras muerte

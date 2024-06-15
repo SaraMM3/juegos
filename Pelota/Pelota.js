@@ -286,7 +286,12 @@ const config = {
     width: 800,
     height: 600,
     backgroundColor: '#CCCCFF', // Para color de fondo
-
+    scale: {
+        // Fit to window
+        mode: Phaser.Scale.FIT,
+        // Center vertically and horizontally
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
     scene: Example,
     physics: {
         default: 'arcade',

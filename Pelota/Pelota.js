@@ -89,20 +89,6 @@ class Example extends Phaser.Scene {
         // Ponemos el menu
         this.crearMenu("De al boton para comenzar a jugar!", true)
 
-        // Prueba para movil, hacer opcional mostrarlo luego TODO
-        this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
-        this.botonIzda.setInteractive()
-        this.botonIzda.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
-            if (!this.menu){
-                this.pulsadoIzda = true
-            }
-        })
-
-        this.botonIzda.on("pointerup", () => {    // Cuando se hace click en el, comienza la partida 
-            if (!this.menu){
-                this.pulsadoIzda = false
-            }
-        })
 
         //Añadimos gestor de teclado. Cursors tiene 4 propiedades (las 4 diercciones)
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -221,6 +207,11 @@ class Example extends Phaser.Scene {
             this.botonJugar.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
                 this.onClickBotonJugar()
             })
+
+            // Mostramos opcion habilitar movil
+            this.botonActivarMovil = this.add.text(80, 200, 'Pulsa aqui para controles móviles', { fill: '#000' })
+            .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
+            .on('pointerdown', () => this.habilitarControlesMoviles() )   // Al pulsar boton, se llama funcion
         }
 
         // Si era menu tras muerte
@@ -229,7 +220,23 @@ class Example extends Phaser.Scene {
                 this.gameRestart()
             })
         }
+    }
 
+    habilitarControlesMoviles(){
+        // Prueba para movil, hacer opcional mostrarlo luego TODO
+        this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
+        this.botonIzda.setInteractive()
+        this.botonIzda.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+            if (!this.menu){
+                this.pulsadoIzda = true
+            }
+        })
+
+        this.botonIzda.on("pointerup", () => {    // Cuando se hace click en el, comienza la partida 
+            if (!this.menu){
+                this.pulsadoIzda = false
+            }
+        })
     }
 
     /**
@@ -239,6 +246,7 @@ class Example extends Phaser.Scene {
         this.menu = false
         this.botonJugar.destroy()
         this.textoMenu.destroy()
+        this.botonActivarMovil.destroy()
     }
 
 

@@ -17,9 +17,6 @@ class Example extends Phaser.Scene {
         const directAssets = "https://saramm3.github.io/juegos/Pelota/assets"
         const directAssetsPersonajes = "https://saramm3.github.io/juegos/Pelota/assets/personajes"
 
-        //Cargar recursos
-        //this.load.image('sky', directAssets + '/sky.png');
-
         // Suelo
         this.load.image('ground', directAssets + '/platform.png');
 
@@ -32,16 +29,18 @@ class Example extends Phaser.Scene {
         // Fotogramas sprite jugador (se usaran para animacion)
         this.load.spritesheet('dude', directAssetsPersonajes + personaje, { frameWidth: 90, frameHeight: 76 });
 
-        // Para movil
+        // Para movil- Botones de movimiento
         this.load.image('botonIzda', directAssets + '/izquierda.png');
+        this.load.image('botonDcha', directAssets + '/derecha.png');
+        this.load.image('botonArriba', directAssets + '/arriba.png');
 
     }
 
     create() {
+        // Para ver si se esta pulsando algo en movil
         this.pulsadoIzda = false
-
-        // Mostramos imagen (cielo)
-        //this.add.image(400, 300, 'sky');
+        this.pulsadoDcha = false
+        this.pulsadoArriba = false
 
         // Creamos grupo de plataformas (elem estaticos) con fisica
         this.platforms = this.physics.add.staticGroup();
@@ -110,7 +109,7 @@ class Example extends Phaser.Scene {
             }
 
             //Comprueba si esta pulsando la tecla derecha
-            else if (this.cursors.right.isDown || this.keyD.isDown) {
+            else if (this.cursors.right.isDown || this.keyD.isDown || this.pulsadoDcha) {
                 this.player.setVelocityX(200);
                 this.player.anims.play('right', true);
             }
@@ -122,7 +121,7 @@ class Example extends Phaser.Scene {
             }
 
             //Para saltar. Solo puede si esta tocando el suelo
-            if ((this.cursors.up.isDown || this.keyW.isDown) && this.player.body.touching.down) {
+            if ((this.cursors.up.isDown || this.keyW.isDown || this.pulsadoArriba) && this.player.body.touching.down) {
                 this.player.setVelocityY(-430);
                 this.player.anims.play('turn', true);
             }
@@ -209,7 +208,7 @@ class Example extends Phaser.Scene {
             })
 
             // Mostramos opcion habilitar movil
-            this.botonActivarMovil = this.add.text(80, 200, 'Pulse aqui primero para controles móviles', { fontSize: '25px', fill: '#000' })
+            this.botonActivarMovil = this.add.text(80, 150, 'Pulse aqui primero para controles móviles', { fontSize: '25px', fill: '#000' })
             .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
             .on('pointerdown', () => {
                 this.habilitarControlesMoviles() 
@@ -226,20 +225,54 @@ class Example extends Phaser.Scene {
     }
 
     habilitarControlesMoviles(){
-        // Prueba para movil, hacer opcional mostrarlo luego TODO
+        // Boton izquierda
         this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
         this.botonIzda.setInteractive()
-        this.botonIzda.on("pointerdown", () => {    // Cuando se hace click en el, comienza la partida 
+        this.botonIzda.on("pointerdown", () => {  
             if (!this.menu){
                 this.pulsadoIzda = true
             }
         })
 
-        this.botonIzda.on("pointerup", () => {    // Cuando se hace click en el, comienza la partida 
+        this.botonIzda.on("pointerup", () => {
             if (!this.menu){
                 this.pulsadoIzda = false
             }
         })
+
+
+        // Boton derecha
+        this.botonDcha = this.add.sprite(160, 550, 'botonDcha'); 
+        this.botonDcha.setInteractive()
+        this.botonDcha.on("pointerdown", () => {    
+            if (!this.menu){
+                this.pulsadoDcha = true
+            }
+        })
+
+        this.botonDcha.on("pointerup", () => {
+            if (!this.menu){
+                this.pulsadoDcha = false
+            }
+        })
+
+
+
+        // Boton arriba
+        this.botonArriba = this.add.sprite(640, 550, 'botonArriba'); 
+        this.botonArriba.setInteractive()
+        this.botonArriba.on("pointerdown", () => {    
+            if (!this.menu){
+                this.pulsadoArriba = true
+            }
+        })
+
+        this.botonArriba.on("pointerup", () => {
+            if (!this.menu){
+                this.pulsadoArriba = false
+            }
+        })
+
     }
 
     /**
@@ -249,7 +282,8 @@ class Example extends Phaser.Scene {
         this.menu = false
         this.botonJugar.destroy()
         this.textoMenu.destroy()
-        this.botonActivarMovil.destroy()
+        if (this.botonActivarMovil)
+            this.botonActivarMovil.destroy()
     }
 
 
@@ -304,12 +338,9 @@ class Example extends Phaser.Scene {
         //Para cuando pelota toca el suelo (gameover)
         this.physics.add.collider(this.ball, this.platforms, this.hitFloor, null, this)
 
-
-
     }
   
 }
-
 
 
 const config = {

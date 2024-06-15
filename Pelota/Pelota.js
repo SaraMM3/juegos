@@ -225,6 +225,8 @@ class Example extends Phaser.Scene {
     }
 
     habilitarControlesMoviles(){
+        this.input.addPointer(1);
+
         // Boton izquierda
         this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
         this.botonIzda.setInteractive()
@@ -242,7 +244,7 @@ class Example extends Phaser.Scene {
 
 
         // Boton derecha
-        this.botonDcha = this.add.sprite(160, 550, 'botonDcha'); 
+        this.botonDcha = this.add.sprite(200, 550, 'botonDcha'); 
         this.botonDcha.setInteractive()
         this.botonDcha.on("pointerdown", () => {    
             if (!this.menu){

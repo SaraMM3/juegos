@@ -104,13 +104,13 @@ class Example extends Phaser.Scene {
         if (!this.menu){
             //Comprueba si esta pulsando la tecla izquierda
             if (this.cursors.left.isDown || this.keyA.isDown || this.pulsadoIzda) {
-                this.player.setVelocityX(-200);
+                this.player.setVelocityX(-250);
                 this.player.anims.play('left', true);
             }
 
             //Comprueba si esta pulsando la tecla derecha
             else if (this.cursors.right.isDown || this.keyD.isDown || this.pulsadoDcha) {
-                this.player.setVelocityX(200);
+                this.player.setVelocityX(250);
                 this.player.anims.play('right', true);
             }
 
@@ -242,6 +242,12 @@ class Example extends Phaser.Scene {
             }
         })
 
+        this.botonIzda.on("pointerout", () => {
+            if (!this.menu){
+                this.pulsadoIzda = false
+            }
+        })
+
 
         // Boton derecha
         this.botonDcha = this.add.sprite(200, 550, 'botonDcha'); 
@@ -258,6 +264,11 @@ class Example extends Phaser.Scene {
             }
         })
 
+        this.botonDcha.on("pointerout", () => {
+            if (!this.menu){
+                this.pulsadoDcha = false
+            }
+        })
 
 
         // Boton arriba
@@ -270,6 +281,12 @@ class Example extends Phaser.Scene {
         })
 
         this.botonArriba.on("pointerup", () => {
+            if (!this.menu){
+                this.pulsadoArriba = false
+            }
+        })
+
+        this.botonArriba.on("pointerout", () => {
             if (!this.menu){
                 this.pulsadoArriba = false
             }

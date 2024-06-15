@@ -193,14 +193,15 @@ class Example extends Phaser.Scene {
             this.botonJugar.anims.play('botonJugarVerde', true);
         })       
         
-        // Mostramos opcion habilitar movil
-        this.botonActivarMovil = this.add.text(80, 150, 'Pulse aqui primero para controles móviles', { fontSize: '25px', fill: '#000' })
-        .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
-        .on('pointerdown', () => {
-            this.habilitarControlesMoviles() 
-            this.botonActivarMovil.destroy()
-        })   // Al pulsar boton, se llama funcion
-
+        // Mostramos opcion habilitar movil (solo en la primera partida)
+        if (this.primeraPartida){
+            this.botonActivarMovil = this.add.text(80, 150, 'Pulse aqui primero para controles móviles', { fontSize: '25px', fill: '#000' })
+            .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
+            .on('pointerdown', () => {
+                this.habilitarControlesMoviles() 
+                this.botonActivarMovil.destroy()
+            })   // Al pulsar boton, se llama funcion
+        }
     }
 
     habilitarControlesMoviles(){

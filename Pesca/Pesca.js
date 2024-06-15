@@ -37,9 +37,21 @@ class Example extends Phaser.Scene {
         this.load.spritesheet('pezRaro', directAssets + "/pez_raro_dorado.png", { frameWidth: 26, frameHeight: 20 });
         this.load.image('pezGlobo', directAssets + '/pez_globo.png'); // Este no tiene animaciones, solo rebota
 
+        // Para movil- Botones de movimiento
+        this.load.image('botonIzda', directAssets + '/izquierda.png');
+        this.load.image('botonDcha', directAssets + '/derecha.png');
+        this.load.image('botonArriba', directAssets + '/arriba.png');
+        this.load.image('botonAbajo', directAssets + '/abajo.png');
+
     }
 
     create() {
+        // Para ver si se esta pulsando algo en movil
+        this.pulsadoIzda = false
+        this.pulsadoDcha = false
+        this.pulsadoArriba = false
+        this.pulsadoAbajo = false
+
         // Mostramos fondo
         this.marCapa1 = this.add.tileSprite(400, 300, 800, 600, 'MarCapa1')
         this.marCapa2 = this.add.tileSprite(400, 300, 800, 600, 'MarCapa2')
@@ -77,13 +89,13 @@ class Example extends Phaser.Scene {
         if (!this.menu){
 
             // Comprueba si esta pulsando la tecla izquierda
-            if (this.cursors.left.isDown || this.keyA.isDown) {
+            if (this.cursors.left.isDown || this.keyA.isDown || this.pulsadoIzda) {
                 this.player.setVelocityX(-200); //Entonces aplica velocidad horizontal negativa (hacia izda)
                 this.player.anims.play('playerLeft', true); //Ejecuta la animacion de moverse a la izquierda
             }
 
             //Comprueba si esta pulsando la tecla derecha
-            else if (this.cursors.right.isDown || this.keyD.isDown) {
+            else if (this.cursors.right.isDown || this.keyD.isDown || this.pulsadoDcha) {
                 this.player.setVelocityX(200);
                 this.player.anims.play('playerRight', true);
             }
@@ -95,12 +107,12 @@ class Example extends Phaser.Scene {
             }
 
             //Para saltar, o en este caso, nadar hacia arriba
-            if (this.cursors.up.isDown || this.keyW.isDown) {
+            if (this.cursors.up.isDown || this.keyW.isDown || this.pulsadoArriba) {
                 this.player.setVelocityY(-200);
             }
 
             //Para bajar mas rapido
-            if (this.cursors.down.isDown || this.keyS.isDown) {
+            if (this.cursors.down.isDown || this.keyS.isDown || this.pulsadoAbajo) {
                 this.player.setVelocityY(200);
             }
         }
@@ -179,7 +191,107 @@ class Example extends Phaser.Scene {
 
         this.botonJugar.on("pointerout", () => {    // Cuando se sale del hover sobre el, vuelve a ser verde
             this.botonJugar.anims.play('botonJugarVerde', true);
-        })        
+        })       
+        
+        // Mostramos opcion habilitar movil
+        this.botonActivarMovil = this.add.text(80, 150, 'Pulse aqui primero para controles móviles', { fontSize: '25px', fill: '#000' })
+        .setInteractive({ useHandCursor: true })             // UseHandCursor hace que se vea la manita tipica de links y demas
+        .on('pointerdown', () => {
+            this.habilitarControlesMoviles() 
+            this.botonActivarMovil.destroy()
+        })   // Al pulsar boton, se llama funcion
+
+    }
+
+    habilitarControlesMoviles(){
+        this.input.addPointer(1);
+
+        // Boton izquierda
+        this.botonIzda = this.add.sprite(80, 550, 'botonIzda'); 
+        this.botonIzda.setInteractive()
+        this.botonIzda.on("pointerdown", () => {  
+            if (!this.menu){
+                this.pulsadoIzda = true
+            }
+        })
+
+        this.botonIzda.on("pointerup", () => {
+            if (!this.menu){
+                this.pulsadoIzda = false
+            }
+        })
+
+        this.botonIzda.on("pointerout", () => {
+            if (!this.menu){
+                this.pulsadoIzda = false
+            }
+        })
+
+
+        // Boton derecha
+        this.botonDcha = this.add.sprite(200, 550, 'botonDcha'); 
+        this.botonDcha.setInteractive()
+        this.botonDcha.on("pointerdown", () => {    
+            if (!this.menu){
+                this.pulsadoDcha = true
+            }
+        })
+
+        this.botonDcha.on("pointerup", () => {
+            if (!this.menu){
+                this.pulsadoDcha = false
+            }
+        })
+
+        this.botonDcha.on("pointerout", () => {
+            if (!this.menu){
+                this.pulsadoDcha = false
+            }
+        })
+
+
+        // Boton arriba
+        this.botonArriba = this.add.sprite(600, 550, 'botonArriba'); 
+        this.botonArriba.setInteractive()
+        this.botonArriba.on("pointerdown", () => {    
+            if (!this.menu){
+                this.pulsadoArriba = true
+            }
+        })
+
+        this.botonArriba.on("pointerup", () => {
+            if (!this.menu){
+                this.pulsadoArriba = false
+            }
+        })
+
+        this.botonArriba.on("pointerout", () => {
+            if (!this.menu){
+                this.pulsadoArriba = false
+            }
+        })
+
+
+        // Boton abajo
+        this.botonAbajo = this.add.sprite(720, 550, 'botonAbajo'); 
+        this.botonAbajo.setInteractive()
+        this.botonAbajo.on("pointerdown", () => {    
+            if (!this.menu){
+                this.pulsadoAbajo = true
+            }
+        })
+
+        this.botonAbajo.on("pointerup", () => {
+            if (!this.menu){
+                this.pulsadoAbajo = false
+            }
+        })
+
+        this.botonAbajo.on("pointerout", () => {
+            if (!this.menu){
+                this.pulsadoAbajo = false
+            }
+        })
 
     }
 
@@ -191,6 +303,9 @@ class Example extends Phaser.Scene {
         this.menu = false
         this.botonJugar.destroy()
         this.textoMenu.destroy()
+        if (this.botonActivarMovil)
+            this.botonActivarMovil.destroy()
+
     }
 
 

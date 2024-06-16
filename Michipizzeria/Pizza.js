@@ -1,7 +1,4 @@
-import Phaser from 'phaser'
-import PhaserGame from 'nuxtjs-phaser/phaserGame.vue'
-// */
-/* Variables para guardar funciones callback eventos y el personaje elegido por el usuario si ha elegido algo*/
+
 /* Variables para guardar funciones callback eventos y el personaje elegido por el usuario si ha elegido algo*/
 var cambioPuntuacion
 var gameOverEvento

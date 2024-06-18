@@ -594,7 +594,7 @@ const config = {
  */
 function getSprite(personajeArg) {
     // Lista con los personajes para los cuales este juego tiene sprites
-    let personajesSoportados = ["Monarca", "Artista"]
+    let personajesSoportados = ["Monarca", "Artista", "Mantita"]
 
     if (personajesSoportados.includes(personajeArg)){
         return "/" + personajeArg + ".png"

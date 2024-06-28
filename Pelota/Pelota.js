@@ -392,7 +392,7 @@ function getSprite(personajeArg) {
     console.log("EN GETSPRITE " + personajeArg)
 
     // Lista con los personajes para los cuales este juego tiene sprites
-    let personajesSoportados = ["Monarca", "Artista", "Mantita"]
+    let personajesSoportados = ["Monarca", "Artista", "Mantita", "Empresario"]
 
     if (personajesSoportados.includes(personajeArg)){
         return "/" + personajeArg + ".png"
